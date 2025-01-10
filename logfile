@@ -1,0 +1,27 @@
+2025-01-10 08:33:19.876 EET [32837] LOG:  starting PostgreSQL 15.8 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
+2025-01-10 08:33:19.877 EET [32837] LOG:  listening on IPv6 address "::1", port 5432
+2025-01-10 08:33:19.877 EET [32837] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-01-10 08:33:19.879 EET [32837] FATAL:  could not create lock file "/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-01-10 08:33:19.880 EET [32837] LOG:  database system is shut down
+2025-01-10 08:35:20.305 EET [33413] LOG:  starting PostgreSQL 15.8 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
+2025-01-10 08:35:20.306 EET [33413] LOG:  listening on IPv6 address "::1", port 5432
+2025-01-10 08:35:20.306 EET [33413] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-01-10 08:35:20.308 EET [33413] LOG:  listening on Unix socket "/run/postgresql/.s.PGSQL.5432"
+2025-01-10 08:35:20.315 EET [33416] LOG:  database system was shut down at 2025-01-10 08:33:12 EET
+2025-01-10 08:35:20.320 EET [33413] LOG:  database system is ready to accept connections
+2025-01-10 08:36:01.093 EET [33600] FATAL:  role "postgres" does not exist
+2025-01-10 08:36:10.307 EET [33631] FATAL:  database "kazimirov" does not exist
+2025-01-10 08:36:50.864 EET [33413] LOG:  received fast shutdown request
+2025-01-10 08:36:50.867 EET [33413] LOG:  aborting any active transactions
+2025-01-10 08:36:50.868 EET [33413] LOG:  background worker "logical replication launcher" (PID 33419) exited with exit code 1
+2025-01-10 08:36:50.868 EET [33414] LOG:  shutting down
+2025-01-10 08:36:50.872 EET [33414] LOG:  checkpoint starting: shutdown immediate
+2025-01-10 08:36:50.903 EET [33414] LOG:  checkpoint complete: wrote 41 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.010 s, total=0.035 s; sync files=11, longest=0.004 s, average=0.001 s; distance=229 kB, estimate=229 kB
+2025-01-10 08:36:50.905 EET [33413] LOG:  database system is shut down
+2025-01-10 08:40:36.561 EET [34784] LOG:  starting PostgreSQL 15.8 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
+2025-01-10 08:40:36.561 EET [34784] LOG:  listening on IPv6 address "::1", port 5432
+2025-01-10 08:40:36.561 EET [34784] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-01-10 08:40:36.564 EET [34784] LOG:  listening on Unix socket "/run/postgresql/.s.PGSQL.5432"
+2025-01-10 08:40:36.571 EET [34787] LOG:  database system was shut down at 2025-01-10 08:40:09 EET
+2025-01-10 08:40:36.576 EET [34784] LOG:  database system is ready to accept connections
+2025-01-10 08:40:49.042 EET [34865] FATAL:  database "kazimirov" does not exist

@@ -1,16 +1,21 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract MusicStreamingRevenue {
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+
+contract MusicStreamingRevenue is ChainlinkClient {
+    using Chainlink for Chainlink.Request;
+
+    uint256 public volume;
+
     address public artist;
     address public platform;
-    mapping(address => uint256) public collaborators; // Shares for collaborators
-    address[] private collaboratorList; // Array to store collaborator addresses
-    uint256 public platformShare; // Percentage in basis points (e.g., 500 = 5%)
-    uint256 public constant totalShares = 10000; // Total shares excluding platform
+    uint256 public streamingRevenue;
 
-    event PaymentReceived(address indexed from, uint256 amount);
-    event PaymentDistributed(address indexed to, uint256 amount);
+    address private oracle;
+    bytes32 private jobId;
+    uint256 private fee;
+
+    event StreamingRevenueUpdated(uint256 revenue);
 
     modifier onlyArtist() {
         require(
@@ -20,69 +25,49 @@ contract MusicStreamingRevenue {
         _;
     }
 
-    constructor(
-        address _artist,
-        address _platform,
-        uint256 _platformShareBasisPoints
-    ) {
+    constructor(address _artist, address _platform) {
+        _setPublicChainlinkToken();
         artist = _artist;
         platform = _platform;
-        platformShare = _platformShareBasisPoints;
-        collaborators[artist] = 10000 - platformShare;
+
+        // Set Chainlink Oracle details
+        oracle = 0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8;
+        jobId = "d5270d1c311941d0b08bead21fea7747";
+        fee = 0.1 * 10 ** 18; // 0.1 LINK
     }
 
-    // Add a collaborator and assign a share
-    function addCollaborator(
-        address collaborator,
-        uint256 share
-    ) external onlyArtist {
-        require(collaborator != address(0), "Invalid collaborator address");
-        require(share > 0, "Share must be greater than 0");
-        require(
-            collaborators[collaborator] == 0,
-            "Collaborator already exists"
-        );
-        require(
-            share <= collaborators[artist] / 2,
-            "The share of a collaborator cannot exceed 50% of the artist's share"
+    function requestStreamingRevenue(
+        string memory artistName
+    ) public onlyArtist returns (bytes32 requestId) {
+        Chainlink.Request memory request = buildChainlinkRequest(
+            jobId,
+            address(this),
+            this.fulfill.selector
         );
 
-        collaborators[artist] -= share;
-        collaborators[collaborator] = share;
-        collaboratorList.push(collaborator); // Store the collaborator in the list
+        // Add the API URL to fetch artist data
+        request.add(
+            "get",
+            string(
+                abi.encodePacked(
+                    "http://127.0.0.1:5000/api/artist/",
+                    artistName
+                )
+            )
+        );
+
+        // Specify the JSON path to the streams value
+        request.add("path", "streams");
+
+        // Sends the request
+        return _sendChainlinkRequestTo(oracle, request, fee);
     }
 
-    receive() external payable {
-        emit PaymentReceived(msg.sender, msg.value);
-        _distributePayment(msg.value);
-    }
-
-    function _distributePayment(uint256 amount) internal {
-        // Platform's share
-        uint256 platformAmount = (amount * platformShare) / totalShares;
-        payable(platform).transfer(platformAmount);
-        emit PaymentDistributed(platform, platformAmount);
-
-        uint256 remaining = amount - platformAmount;
-
-        // Distribute to collaborators
-        for (uint256 i = 0; i < collaboratorList.length; i++) {
-            address collaboratorAddress = collaboratorList[i];
-            uint256 collaboratorAmount = (remaining *
-                collaborators[collaboratorAddress]) / totalShares;
-
-            payable(collaboratorAddress).transfer(collaboratorAmount);
-            emit PaymentDistributed(collaboratorAddress, collaboratorAmount);
-        }
-
-        // Remaining amount to artist
-        uint256 artistAmount = (remaining * collaborators[artist]) /
-            totalShares;
-        payable(artist).transfer(artistAmount);
-        emit PaymentDistributed(artist, artistAmount);
-    }
-
-    function getCollaborators() external view returns (address[] memory) {
-        return collaboratorList;
+    function fulfill(
+        bytes32 _requestId,
+        uint256 _revenue
+    ) public recordChainlinkFulfillment(_requestId) {
+        streamingRevenue = _revenue;
+        emit StreamingRevenueUpdated(_revenue);
     }
 }
