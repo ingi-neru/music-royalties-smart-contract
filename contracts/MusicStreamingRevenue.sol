@@ -26,7 +26,7 @@ contract MusicStreamingRevenue is ChainlinkClient {
     }
 
     constructor(address _artist, address _platform) {
-        _setPublicChainlinkToken();
+        setPublicChainlinkToken();
         artist = _artist;
         platform = _platform;
 
@@ -60,7 +60,7 @@ contract MusicStreamingRevenue is ChainlinkClient {
         request.add("path", "streams");
 
         // Sends the request
-        return _sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(oracle, request, fee);
     }
 
     function fulfill(
